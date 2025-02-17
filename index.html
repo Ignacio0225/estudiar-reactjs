@@ -162,31 +162,41 @@
 <body>
 <div id="root"></div>
 </body>
-<script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script> <!-- 개발모드 -->
 <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script> <!--프롭 체크-->
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script type="text/babel">
-    function Btn({banana ,size}){
+    function Btn({text,onClick,fontSize =14}){
+        /*아규먼트 옆에 디폴트 값을 줄 수 있음*/
         /* 중괄호를 안쓰고 인자만 줄 수 있음 (props) 하지만 밑에 props.이라고 붙여줘야함
-        props를 통해서 오브젝트 내에서 꺼내주는 역할을 하지만 이미 우리는 props 안에 banana가 있다는것을 알고있기때문에 그냥 꺼내서 쓰면됨*/
+        props를 통해서 오브젝트 내에서 꺼내주는 역할을 하지만 이미 우리는 props 안에 text가 있다는것을 알고있기때문에 그냥 꺼내서 쓰면됨*/
         return  (
-            <button style = {{
+
+            <button onClick={onClick}
+                style = {{
                 backgroundColor:"tomato",
                 color:"white",
                 padding:"10px 20px",
                 border: 0,
                 borderRadius: 10,
-                fontSize: size ? 18 :10,
-                    }}> {banana} </button> /* props.banana*/
+                fontSize,
+                    }}> {text} </button> /* props.text*/ /* fontSize : fontSize 는 동일 하기때문에 하나만써줘도됨 */
 
         );
     }
+    const MemorizedBtn = React.memo(Btn)  /* 밑에 태그도 MemorizedBtn이름을 바꿔줘야함 , 바뀌지 않는 부분은 렌더링 하지 않게해줌*/
+    MemorizedBtn.propTypes = {
+        text: PropTypes.string,
+        fontSize: PropTypes.number.isRequired, /*필수로 확인 하고 싶을경우 isRequired 추가*/
+    }
     function App(){
-
+        const [value,setValue] = React.useState("Save Changes")
+        const changeValue = () => setValue("Revert Changes")
         return(
         <div>
-            <Btn banana="Save Change" size={true}/>
-            <Btn banana="Continue" size={false}/>
+            <MemorizedBtn text={value} onClick={changeValue} fontSize={18}/>
+            <MemorizedBtn text={"Continue"} fontSize={15}/>
         </div>
         );
     }
